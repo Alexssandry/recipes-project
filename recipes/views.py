@@ -5,8 +5,15 @@ from django.shortcuts import render
 
 
 def view_home(request):
-    return render(request, 'home.html')
+    context = {
+        'name': 'alexssandry',
+    }
+    return render(request, 'recipes/home.html', context=context, status=299)
 
 
 def view_sobre(request):
-    return HttpResponse('Sobre')
+    # return HttpResponse('Sobre')
+    context = {
+        'name': 'Alexssandry',
+    }
+    return render(request, 'recipes/sobre.html', context=context)

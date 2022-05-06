@@ -9,3 +9,10 @@ def view_home(request):
         'name': 'Alexssandry',
     }
     return render(request, 'recipes/pages/home.html', context=context)
+
+
+def view_recipe(request, id):
+    context = {
+        'title': 'Recipes Details',
+    }
+    return render(request, 'recipes/pages/recipe-view.html', context=context)

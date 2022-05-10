@@ -1,19 +1,47 @@
 from django.shortcuts import render
-from utils.recipes.factory import make_recipe
+
+from recipes.models import Recipe
+
+# from utils.recipes.factory import make_recipe
+
 
 # Create your views here.
 
 
 def view_home(request):
+    recipes = Recipe.objects.filter(is_published=True).order_by('-id')
+
+    # Context para pagina home
     context = {
-        'recipes': [make_recipe() for _ in range(10)],
+        'recipes': recipes,
     }
     return render(request, 'recipes/pages/home.html', context=context)
 
 
-def view_recipe(request, id):
+def view_category(request, category_id):
+    recipes = Recipe.objects.filter(
+        category__id=category_id,
+        is_published=True,
+    ).order_by('-id')
+
+    title = getattr(
+        getattr(recipes.first(), 'category', None),
+        'name',
+        'Not found',
+    )
+
     context = {
-        'recipe': make_recipe(),
+        'recipes': recipes,
+        'title': '{0}'.format(title),
+    }
+    return render(request, 'recipes/pages/category.html', context=context)
+
+
+def view_recipe_detail(request, recipe_id):
+    recipes = Recipe.objects.filter(id=recipe_id)
+
+    context = {
+        'recipes': recipes,
         'is_detail_page': True,
     }
-    return render(request, 'recipes/pages/recipe-view.html', context=context)
+    return render(request, 'recipes/pages/recipe_detail.html', context=context)

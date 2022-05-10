@@ -2,6 +2,8 @@
 {% block title %}Detail{% endblock title %}
 {% block content %}
 <div class="main-content container main-content-detail">
-    {% include 'recipes/partials/recipe.html' %}
+    {% for recipe in recipes%}
+        {% include 'recipes/partials/recipe.html' %}
+    {% endfor %}
 </div>
 {% endblock content %}

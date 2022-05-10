@@ -38,10 +38,13 @@ def view_category(request, category_id):
 
 
 def view_recipe_detail(request, recipe_id):
-    recipes = Recipe.objects.filter(id=recipe_id)
+    # recipes = Recipe.objects.filter(id=recipe_id)
+    recipe = Recipe.objects.filter(
+        pk=recipe_id
+    )
 
     context = {
-        'recipes': recipes,
+        'recipes': recipe,
         'is_detail_page': True,
     }
     return render(request, 'recipes/pages/recipe_detail.html', context=context)

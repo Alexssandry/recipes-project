@@ -11,7 +11,7 @@ class RecipeBaseTest(TestCase):
         #
         categoria = self.make_category()
         autor = self.make_author()
-        self.make_recipe(autor, categoria)  # noqa
+        self.make_recipe(autor, categoria)
 
         return super().setUp()
 
@@ -49,6 +49,7 @@ class RecipeBaseTest(TestCase):
         preparation_step_in_html=False,
         is_published=True,
     ):
+
         return Recipe.objects.create(  # noqa
             category=make_category,
             author=make_author,
@@ -63,3 +64,6 @@ class RecipeBaseTest(TestCase):
             preparation_step_in_html=preparation_step_in_html,
             is_published=is_published,
         )
+
+    def delete_recipe(self, id=1):
+        Recipe.objects.get(pk=id).delete()

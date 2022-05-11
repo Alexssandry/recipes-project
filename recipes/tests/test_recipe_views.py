@@ -1,7 +1,5 @@
-
 from django.urls import resolve, reverse
 from recipes import views
-from recipes.models import Recipe
 
 from .test_recipe_base import RecipeBaseTest
 
@@ -24,11 +22,15 @@ class RecipeViewsTest(RecipeBaseTest):
         self.assertTemplateUsed(response, template)
 
     def test_recipe_home_template_shows_no_recipes_found_if_no_recipes(self):
-        Recipe.objects.get(pk=1).delete()
+        self.delete_recipe()
+
         # Funciona porque o teste inicia sem dados na base de dados
         response = self.client.get(reverse('recipes:home'))
         self.assertIn('No recipes found here',
                       response.content.decode('utf-8'))
+
+        # # Vou escrever mais coisas
+        # self.fail('Preciso terminar de digitar o teste')
 
     def test_recipe_home_template_loads_recipes(self):
         response = self.client.get(reverse('recipes:home'))
@@ -55,11 +57,12 @@ class RecipeViewsTest(RecipeBaseTest):
         self.assertTemplateUsed(response, template)
 
     def test_recipe_category_template_shows_no_recipes_found_if_no_recipes(self):  # noqa
-        # Funciona porque o teste inicia sem dados na base de dados
-        # response = self.client.get(reverse('recipes:home'))
-        # self.assertIn('No recipes found here',
-        #               response.content.decode('utf-8'))
-        assert 1 == 1
+        self.delete_recipe()
+
+        response = self.client.get(
+            reverse('recipes:category', kwargs={'category_id': 1}))
+        content = 'No recipes found here.'
+        self.assertIn(content, response.content.decode('utf-8'))
 
     def test_recipe_category_template_loads_recipes(self):
         response = self.client.get(
@@ -89,11 +92,12 @@ class RecipeViewsTest(RecipeBaseTest):
         self.assertTemplateUsed(response, template)
 
     def test_recipe_detail_template_shows_no_recipes_found_if_no_recipes(self):
-        # Funciona porque o teste inicia sem dados na base de dados
-        # response = self.client.get(reverse('recipes:recipes', kwargs={'recipe_id': 1})) # noqa
-        # self.assertIn('No recipes found here',
-        #               response.content.decode('utf-8'))
-        assert 1 == 1
+        self.delete_recipe()
+
+        response = self.client.get(
+            reverse('recipes:recipe', kwargs={'recipe_id': 1}))
+        content = 'No recipes found here.'
+        self.assertIn(content, response.content.decode('utf-8'))
 
     def test_recipe_detail_template_loads_recipes(self):
         response = self.client.get(

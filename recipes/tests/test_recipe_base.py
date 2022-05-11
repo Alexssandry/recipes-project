@@ -67,3 +67,8 @@ class RecipeBaseTest(TestCase):
 
     def delete_recipe(self, id=1):
         Recipe.objects.get(pk=id).delete()
+
+    def check_recipe_not_published(self, id=1):
+        recipe = Recipe.objects.get(pk=id)
+        recipe.is_published = False
+        recipe.save()

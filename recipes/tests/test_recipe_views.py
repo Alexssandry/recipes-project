@@ -41,6 +41,17 @@ class RecipeViewsTest(RecipeBaseTest):
         response_content = response.content.decode('utf-8')
         self.assertIn('Recipe title', response_content)
 
+    def test_recipe_home_not_loads_recipes_is_published(self):
+        response = self.client.get(reverse('recipes:home'))
+        quantidade_recipes_is_published = len(response.context['recipes'])
+
+        self.check_recipe_not_published()
+
+        response = self.client.get(reverse('recipes:home'))
+        quantidade_recipes_not_is_published = len(response.context['recipes'])
+        self.assertNotEqual(quantidade_recipes_not_is_published,
+                            quantidade_recipes_is_published)
+
     def test_recipe_category_view_function_is_correct(self):
         view = resolve('/recipes/category/1')
         self.assertIs(view.func, views.view_category)
@@ -76,6 +87,19 @@ class RecipeViewsTest(RecipeBaseTest):
         response_content = response.content.decode('utf-8')
         self.assertIn('Recipe title', response_content)
 
+    def test_recipe_category_not_loads_recipes_is_published(self):
+        response = self.client.get(
+            reverse('recipes:category', kwargs={'category_id': 1}))
+        quantidade_recipes_is_published = len(response.context['recipes'])
+
+        self.check_recipe_not_published()
+
+        response = self.client.get(
+            reverse('recipes:category', kwargs={'category_id': 1}))
+        quantidade_recipes_not_is_published = len(response.context['recipes'])
+        self.assertNotEqual(quantidade_recipes_not_is_published,
+                            quantidade_recipes_is_published)
+
     def test_recipe_detail_view_function_is_correct(self):
         view = resolve('/recipes/1')
         self.assertIs(view.func, views.view_recipe_detail)
@@ -110,3 +134,16 @@ class RecipeViewsTest(RecipeBaseTest):
         # Teste feito se apareceu na pagina
         response_content = response.content.decode('utf-8')
         self.assertIn('Recipe title', response_content)
+
+    def test_recipe_detail_not_loads_recipes_is_published(self):
+        response = self.client.get(
+            reverse('recipes:recipe', kwargs={'recipe_id': 1}))
+        quantidade_recipes_is_published = len(response.context['recipes'])
+
+        self.check_recipe_not_published()
+
+        response = self.client.get(
+            reverse('recipes:recipe', kwargs={'recipe_id': 1}))
+        quantidade_recipes_not_is_published = len(response.context['recipes'])
+        self.assertNotEqual(quantidade_recipes_not_is_published,
+                            quantidade_recipes_is_published)

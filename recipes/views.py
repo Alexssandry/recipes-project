@@ -40,7 +40,8 @@ def view_category(request, category_id):
 def view_recipe_detail(request, recipe_id):
     # recipes = Recipe.objects.filter(id=recipe_id)
     recipe = Recipe.objects.filter(
-        pk=recipe_id
+        pk=recipe_id,
+        is_published=True,
     )
 
     context = {

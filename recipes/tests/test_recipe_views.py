@@ -53,7 +53,7 @@ class RecipeViewsTest(RecipeBaseTest):
                             quantidade_recipes_is_published)
 
     def test_recipe_category_view_function_is_correct(self):
-        view = resolve('/recipes/category/1')
+        view = resolve('/recipes/category/1/')
         self.assertIs(view.func, views.view_category)
 
     def test_recipe_category_view_returns_status_code_200_ok(self):
@@ -101,7 +101,7 @@ class RecipeViewsTest(RecipeBaseTest):
                             quantidade_recipes_is_published)
 
     def test_recipe_detail_view_function_is_correct(self):
-        view = resolve('/recipes/1')
+        view = resolve('/recipes/1/')
         self.assertIs(view.func, views.view_recipe_detail)
 
     def test_recipe_detail_view_returns_status_code_200_ok(self):

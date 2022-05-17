@@ -22,7 +22,7 @@ class RecipeViewsTest(RecipeBaseTest):
         self.assertTemplateUsed(response, template)
 
     def test_recipe_home_template_shows_no_recipes_found_if_no_recipes(self):
-        self.delete_recipe()
+        self.delete_recipe_all()
 
         # Funciona porque o teste inicia sem dados na base de dados
         response = self.client.get(reverse('recipes:home'))
@@ -68,7 +68,7 @@ class RecipeViewsTest(RecipeBaseTest):
         self.assertTemplateUsed(response, template)
 
     def test_recipe_category_template_shows_no_recipes_found_if_no_recipes(self):  # noqa
-        self.delete_recipe()
+        self.delete_recipe_all()
 
         response = self.client.get(
             reverse('recipes:category', kwargs={'category_id': 1}))

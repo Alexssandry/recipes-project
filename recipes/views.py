@@ -10,17 +10,17 @@ from recipes.models import Recipe
 
 
 # Função para paginação nas views
-def func_pagination(request, recipes):
+def func_pagination(request, recipes, pages_per_page=9, qty_page=4):
     try:
         current_page = int(request.GET.get('page', 1))
     except ValueError:
         current_page = 1
 
-    paginator = Paginator(recipes, 9)
+    paginator = Paginator(recipes, pages_per_page)
     page_object = paginator.get_page(current_page)
     pagination_range = make_pagination_range(
         paginator.page_range,
-        4,
+        qty_page,
         current_page,
     )
     return page_object, pagination_range

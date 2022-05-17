@@ -9,9 +9,23 @@ class RecipeBaseTest(TestCase):
 
         # Cria base de dados para os testes.
         #
-        categoria = self.make_category()
+        categoria1 = self.make_category()
+        categoria2 = self.make_category(name='Assados')
+        categoria3 = self.make_category(name='Fritos')
         autor = self.make_author()
-        self.make_recipe(autor, categoria)
+        for i in range(45):
+            slug = 'recipe-slug1-{0}'.format(i)
+            self.make_recipe(autor, categoria1, slug=slug)
+        for i in range(18):
+            slug = 'recipe-slug2-{0}'.format(i)
+            title = 'Assados de carne'
+            self.make_recipe(autor, categoria2, title=title, slug=slug)
+        for i in range(27):
+            slug = 'recipe-slug3-{0}'.format(i)
+            self.make_recipe(autor, categoria2, slug=slug)
+        for i in range(18):
+            slug = 'recipe-slug4-{0}'.format(i)
+            self.make_recipe(autor, categoria3, slug=slug, is_published=False)
 
         return super().setUp()
 
@@ -69,6 +83,12 @@ class RecipeBaseTest(TestCase):
         Recipe.objects.get(pk=id).delete()
 
     def check_recipe_not_published(self, id=1):
-        recipe = Recipe.objects.get(pk=id)
-        recipe.is_published = False
-        recipe.save()
+        recipes = Recipe.objects.all()
+        for recipe in recipes:
+            recipe.is_published = False
+            recipe.save()
+
+    def delete_recipe_all(self):
+        recipes = Recipe.objects.all()
+        for recipe in recipes:
+            recipe.delete()

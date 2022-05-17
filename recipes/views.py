@@ -1,21 +1,44 @@
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render
+from utils.pagination import make_pagination_range
 
 from recipes.models import Recipe
 
-# from utils.recipes.factory import make_recipe
-
-
 # Create your views here.
+
+
+# Função para paginação nas views
+def func_pagination(request, recipes):
+    try:
+        current_page = int(request.GET.get('page', 1))
+    except ValueError:
+        current_page = 1
+
+    paginator = Paginator(recipes, 9)
+    page_object = paginator.get_page(current_page)
+    pagination_range = make_pagination_range(
+        paginator.page_range,
+        4,
+        current_page,
+    )
+    return page_object, pagination_range
 
 
 def view_home(request):
     recipes = Recipe.objects.filter(is_published=True).order_by('-id')
 
+    page_object, pagination_range = func_pagination(request, recipes)
+
     # Context para pagina home
     context = {
-        'recipes': recipes,
+        'recipes': page_object,
+        'pagination_range': pagination_range,
+        'link_inicial': '?page=1',
+        'link': '?page=',
+        'link_final': '?page={0}'.format(
+            pagination_range['total_pages']),
     }
     return render(request, 'recipes/pages/home.html', context=context)
 
@@ -32,9 +55,17 @@ def view_category(request, category_id):
         'Not found',
     )
 
+    # Adiciona paginação na tela de category
+    page_object, pagination_range = func_pagination(request, recipes)
+
     context = {
-        'recipes': recipes,
+        'recipes': page_object,
         'title': '{0}'.format(title),
+        'pagination_range': pagination_range,
+        'link_inicial': '?page=1',
+        'link': '?page=',
+        'link_final': '?page={0}'.format(
+            pagination_range['total_pages']),
     }
     return render(request, 'recipes/pages/category.html', context=context)
 
@@ -65,8 +96,17 @@ def view_search(request):
         is_published=True,
     ).order_by('-id')
 
+    # Adiciona paginação na tela de category
+    page_object, pagination_range = func_pagination(request, recipes)
+
     context = {
         'page_title': 'Search for "{0}"'.format(search_term),
-        'recipes': recipes,
+        'recipes': page_object,
+        'pagination_range': pagination_range,
+        'link_inicial': '?q={0}&page=1'.format(search_term),
+        'link': '?q={0}&page='.format(search_term),
+        'link_final': '?q={0}&page={1}'.format(
+            search_term,
+            pagination_range['total_pages']),
     }
     return render(request, 'recipes/pages/search.html', context=context)

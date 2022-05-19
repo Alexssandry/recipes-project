@@ -1,35 +1,20 @@
-from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render
-from utils.pagination import make_pagination_range
+from utils.pagination import func_pagination
 
 from recipes.models import Recipe
 
 # Create your views here.
 
-
-# Função para paginação nas views
-def func_pagination(request, recipes, pages_per_page=9, qty_page=4):
-    try:
-        current_page = int(request.GET.get('page', 1))
-    except ValueError:
-        current_page = 1
-
-    paginator = Paginator(recipes, pages_per_page)
-    page_object = paginator.get_page(current_page)
-    pagination_range = make_pagination_range(
-        paginator.page_range,
-        qty_page,
-        current_page,
-    )
-    return page_object, pagination_range
+PER_PAGE = 9
 
 
 def view_home(request):
     recipes = Recipe.objects.filter(is_published=True).order_by('-id')
 
-    page_object, pagination_range = func_pagination(request, recipes)
+    page_object, pagination_range = func_pagination(
+        request, recipes, pages_per_page=PER_PAGE)
 
     # Context para pagina home
     context = {
@@ -56,7 +41,8 @@ def view_category(request, category_id):
     )
 
     # Adiciona paginação na tela de category
-    page_object, pagination_range = func_pagination(request, recipes)
+    page_object, pagination_range = func_pagination(
+        request, recipes, pages_per_page=PER_PAGE)
 
     context = {
         'recipes': page_object,
@@ -97,7 +83,8 @@ def view_search(request):
     ).order_by('-id')
 
     # Adiciona paginação na tela de category
-    page_object, pagination_range = func_pagination(request, recipes)
+    page_object, pagination_range = func_pagination(
+        request, recipes, pages_per_page=PER_PAGE)
 
     context = {
         'page_title': 'Search for "{0}"'.format(search_term),

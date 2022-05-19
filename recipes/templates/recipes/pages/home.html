@@ -1,13 +1,15 @@
 {% extends 'global/base.html' %}
 {% block title %}Home{% endblock title %}
 {% block content %}
-<div class="main-content container main-content-list">
-    {% if recipes %}
+{% if recipes %}
+    <div class="main-content container main-content-list">
         {% for recipe in recipes %}
             {% include 'recipes/partials/recipe.html' %}
         {% endfor %}
-    {% else %}
+    </div>
+{% else %}
+    <div class="main-content container main-content-list center">
         <h1>No recipes found here.</h1>
-    {% endif %}
-</div>
+    </div>
+{% endif %}
 {% endblock content %}

@@ -1,5 +1,6 @@
 import os
 
+from django.contrib import messages
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render
@@ -79,6 +80,9 @@ def view_search(request):
     search_term = request.GET.get('q', '').strip()
     if not search_term:
         raise Http404()
+
+    messages.success(
+        request, 'You are searching for "{0}"!'.format(search_term))
 
     recipes = Recipe.objects.filter(
         Q(title__icontains=search_term) |

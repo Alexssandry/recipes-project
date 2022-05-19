@@ -1,3 +1,5 @@
+import os
+
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render
@@ -7,7 +9,9 @@ from recipes.models import Recipe
 
 # Create your views here.
 
-PER_PAGE = 9
+PER_PAGE = int(os.environ.get('PER_PAGE', 6))
+
+print('DEBUG = {0}'.format(os.environ.get('DEBUG')))
 
 
 def view_home(request):

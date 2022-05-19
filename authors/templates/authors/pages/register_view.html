@@ -1,1 +1,32 @@
 {% extends 'global/base.html' %}
+{% block title %}{{ title }}{% endblock title %}{{ title }}
+{% block content %}
+    <div class="main-content center container">
+        <h2>Register</h2>
+        <p>{{ request.session.number }}</p>
+    </div>
+
+    <div class="main-content container">
+        <div class="form-content form-content-grid">
+            <form action="{% url 'authors:register_create' %}" method="POST">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}" class="">{{ field.label}}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <p class="help_text">{{field.help_text}}</p>
+                        {% endif %}
+
+                        {{ field.errors }}
+                    </div>    
+                {% endfor %}
+
+                <div class="form-group">
+                    <button type="submit">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

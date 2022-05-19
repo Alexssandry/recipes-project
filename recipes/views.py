@@ -1,6 +1,6 @@
 import os
 
-from django.contrib import messages
+from django.contrib import messages  # noqa: F401
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render
@@ -17,6 +17,11 @@ print('DEBUG = {0}'.format(os.environ.get('DEBUG')))
 
 def view_home(request):
     recipes = Recipe.objects.filter(is_published=True).order_by('-id')
+
+    # messages.success(request, 'ola')
+    # messages.warning(request, 'ola')
+    # messages.error(request, 'ola')
+    # messages.info(request, 'ola')
 
     page_object, pagination_range = func_pagination(
         request, recipes, pages_per_page=PER_PAGE)
@@ -81,8 +86,8 @@ def view_search(request):
     if not search_term:
         raise Http404()
 
-    messages.success(
-        request, 'You are searching for "{0}"!'.format(search_term))
+    # messages.info(
+    #     request, 'You are searching for "{0}"!'.format(search_term))
 
     recipes = Recipe.objects.filter(
         Q(title__icontains=search_term) |

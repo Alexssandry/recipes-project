@@ -1,5 +1,8 @@
+from unittest import TestCase
+
 from authors.forms import RegisterForm
-from django.test import TestCase
+from django.test import TestCase as DjangoTestCase
+from django.urls import reverse
 
 
 class AuthorRegisterFormUnitTest(TestCase):
@@ -54,3 +57,22 @@ class AuthorRegisterFormUnitTest(TestCase):
         help_text = form['password2'].field.help_text
         # help_text == 'Repeat your password here.'
         self.assertEqual(help_text, 'Repeat your password here.')
+
+
+class AuthorRegisterFormIntegrationTest(DjangoTestCase):
+    def setUp(self, *args, **kwargs):
+        self.form_data = {
+            'username': 'user',
+            'first_name': 'first',
+            'last_name': 'last',
+            'email': 'first.last@teste.com',
+            'password': 'passteste12345',
+            'password2': 'passteste12345',
+        }
+        return super().setUp(*args, **kwargs)
+
+    def test_fields_cannot_be_empty(self):
+        self.form_data['username'] = ''
+        url = reverse('authors:register_create')
+        response = self.client.post(url, data=self.form_data, follow=True)
+        self.assertIn('This field must not', response.content.decode('utf-8'))

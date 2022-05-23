@@ -39,11 +39,13 @@ def view_register_create(request):
     form = RegisterForm(POST)
 
     if form.is_valid():
-        # salva form
-        form.save()
+        # salva form porem a senha fica sem criptografia
+        # form.save()
 
         # pegar dados antes de salvar
-        # data = form.save(commit=False)
+        data_form = form.save(commit=False)
+        data_form.set_password(data_form.password)
+        data_form.save()
 
         messages.success(request, 'Your user is created, please log in.')
 

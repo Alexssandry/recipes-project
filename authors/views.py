@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -33,7 +35,7 @@ def view_register(request):
 
 def view_register_create(request):
     if not request.POST:
-        raise Http404
+        raise Http404()
 
     POST = request.POST
     request.session['register_form_data'] = POST
@@ -54,7 +56,7 @@ def view_register_create(request):
         del(request.session['register_form_data'])
         del(request.session['number'])
 
-    return redirect('authors:register')
+    return redirect('authors:login')
 
 
 def view_login(request):
@@ -66,9 +68,43 @@ def view_login(request):
     context = {
         'title': 'Login',
         'form': form,
+        'form_action': reverse('authors:login_create'),
     }
     return render(request, 'authors/pages/login.html', context=context)
 
 
 def view_login_create(request):
-    return render(request, 'authors/pages/login.html')
+    if not request.POST:
+        raise Http404()
+
+    form = LoginForm(request.POST)
+    login_url = reverse('authors:login')
+
+    if form.is_valid():
+        authenticeted_user = authenticate(
+            username=form.cleaned_data.get('username', ''),
+            password=form.cleaned_data.get('password', ''),
+        )
+
+        if authenticeted_user is not None:
+            messages.success(request, 'You are logged in.')
+            login(request, authenticeted_user)
+        else:
+            messages.error(request, 'Invalid credentials.')
+    else:
+        messages.error(request, 'Invalid username or password.')
+
+    return redirect(login_url)
+
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def view_logout(request):
+    if not request.POST:
+        return redirect(reverse('authors:login'))
+
+    if request.POST.get('username') != request.user.username:
+        print('invalid username', request.POST, request.user.username)
+        return redirect(reverse('authors:login'))
+
+    logout(request)
+    return redirect(reverse('authors:login'))

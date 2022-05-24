@@ -338,7 +338,18 @@ h6 {
 .form-content button:hover {
     background: var(--color-primary-dark-hover);
 }
-
+.plaintext-button {
+    display: inline;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--color-primary);
+    font-size: 16px;
+}
+.inline-form {
+    display: inline;
+    font-size: 16px;
+}
 /* Messages */
 .messages-container {
     display: flex;

@@ -3,7 +3,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .forms import RegisterForm
+from .forms import LoginForm, RegisterForm
 
 # Create your views here.
 
@@ -26,7 +26,7 @@ def view_register(request):
     context = {
         'title': 'Register',
         'form': form,
-        'form_actino': reverse('authors:register_create')
+        'form_action': reverse('authors:register_create')
     }
     return render(request, 'authors/pages/register_view.html', context=context)
 
@@ -55,3 +55,20 @@ def view_register_create(request):
         del(request.session['number'])
 
     return redirect('authors:register')
+
+
+def view_login(request):
+    request.session['number'] = request.session.get('number') or 0
+    request.session['number'] += 1
+
+    form = LoginForm()
+
+    context = {
+        'title': 'Login',
+        'form': form,
+    }
+    return render(request, 'authors/pages/login.html', context=context)
+
+
+def view_login_create(request):
+    return render(request, 'authors/pages/login.html')

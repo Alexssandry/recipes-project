@@ -95,7 +95,7 @@ class RegisterForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        print(email)
+        print('EMAIL: {0}'.format(email))
         exist = User.objects.filter(email=email).exists()
         if exist:
             raise ValidationError(
@@ -103,14 +103,19 @@ class RegisterForm(forms.ModelForm):
                 code='invalid'
             )
 
+        return email
+
     def clean_username(self):
         username = self.cleaned_data.get('username')
+        print('USERNAME: {0}'.format(username))
         exist = User.objects.filter(username=username).exists()
         if exist:
             raise ValidationError(
                 'username já foi utilizado!',
                 code='invalid'
             )
+
+        return username
 
     def clean(self):
         # cleaned_data = self.cleaned_data

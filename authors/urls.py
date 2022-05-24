@@ -8,4 +8,6 @@ app_name = 'authors'
 urlpatterns = [
     path('register/', views.view_register, name='register'),
     path('register/create/', views.view_register_create, name='register_create'),  # noqa: E501
+    path('login/', views.view_login, name='login'),
+    path('login/create/', views.view_login_create, name='login_create'),
 ]

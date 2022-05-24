@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from recipes.models import Recipe
 
-from .forms import LoginForm, RegisterForm
+from .forms import AuthorRecipeForm, LoginForm, RegisterForm
 
 # Create your views here.
 
@@ -125,3 +125,30 @@ def view_dashboard(request):
         'recipes': recipes,
     }
     return render(request, 'authors/pages/dashboard.html', context=context)
+
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def view_dashboard_recipe_edit(request, id):
+    recipe = Recipe.objects.filter(
+        is_published=False,
+        author=request.user,
+        pk=id,
+    ).first()
+
+    if not recipe:
+        raise Http404
+
+    form = AuthorRecipeForm(
+        request.POST or None,
+        instance=recipe,
+    )
+
+    context = {
+        'title': 'Dashboard Recipe Edit',
+        'form': form,
+    }
+    return render(
+        request,
+        'authors/pages/dashboard_recipe.html',
+        context=context
+    )

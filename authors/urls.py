@@ -12,4 +12,6 @@ urlpatterns = [
     path('login/create/', views.view_login_create, name='login_create'),
     path('logout/', views.view_logout, name='logout'),
     path('dashboard/', views.view_dashboard, name='dashboard'),
+    path('dashboard/recipe/<int:id>/edit/',
+         views.view_dashboard_recipe_edit, name='dashboard_recipe_edit'),
 ]

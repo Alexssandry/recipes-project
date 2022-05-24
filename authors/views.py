@@ -79,6 +79,7 @@ def view_login_create(request):
 
     form = LoginForm(request.POST)
     login_url = reverse('authors:login')
+    dashboard_url = reverse('authors:dashboard')
 
     if form.is_valid():
         authenticeted_user = authenticate(
@@ -89,6 +90,7 @@ def view_login_create(request):
         if authenticeted_user is not None:
             messages.success(request, 'You are logged in.')
             login(request, authenticeted_user)
+            return redirect(dashboard_url)
         else:
             messages.error(request, 'Invalid credentials.')
     else:
@@ -108,3 +110,11 @@ def view_logout(request):
 
     logout(request)
     return redirect(reverse('authors:login'))
+
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def view_dashboard(request):
+    context = {
+        'title': 'Dashboard',
+    }
+    return render(request, 'authors/pages/dashboard.html', context=context)

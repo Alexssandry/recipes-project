@@ -388,6 +388,10 @@ h6 {
     background: var(--color-warning-light);
     color: var(--color-warning-dark);
 }
+/* Authors */
+.login-messages {
+    margin: 10px 0;
+}
 
 /* Generics */
 .center {

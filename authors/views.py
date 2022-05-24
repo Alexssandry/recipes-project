@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from recipes.models import Recipe
 
 from .forms import LoginForm, RegisterForm
 
@@ -114,7 +115,13 @@ def view_logout(request):
 
 @login_required(login_url='authors:login', redirect_field_name='next')
 def view_dashboard(request):
+    recipes = Recipe.objects.filter(
+        is_published=False,
+        author=request.user,
+    )
+
     context = {
         'title': 'Dashboard',
+        'recipes': recipes,
     }
     return render(request, 'authors/pages/dashboard.html', context=context)

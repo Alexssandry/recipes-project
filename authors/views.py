@@ -218,3 +218,22 @@ def view_dashboard_create_new_recipe(request):
         messages.error(request, 'Não foi possivel criar sua recipe')
 
     return redirect('authors:dashboard')
+
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def view_dashboard_recipe_delete(request, id):
+    if not request.POST:
+        raise Http404
+
+    recipe = Recipe.objects.filter(
+        is_published=False,
+        author=request.user,
+        pk=id,
+    ).first()
+
+    if not recipe:
+        raise Http404
+
+    recipe.delete()
+
+    return redirect('authors:dashboard')

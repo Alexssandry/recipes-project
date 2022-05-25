@@ -14,10 +14,10 @@ urlpatterns = [
     path('dashboard/', views.view_dashboard, name='dashboard'),
     path('dashboard/recipe/<int:id>/edit/',
          views.view_dashboard_recipe_edit, name='dashboard_recipe_edit'),
-    path('dashboard/new/recipe/', views.view_dashboard_new_recipe,
+    path('dashboard/recipe/<int:id>/delete/',
+         views.view_dashboard_recipe_delete, name='dashboard_recipe_delete'),
+    path('dashboard/recipe/new/', views.view_dashboard_new_recipe,
          name='dashboard_new_recipe'),
-    path('dashboard/new/recipe/create/',
-         views.view_dashboard_create_new_recipe,
-         name='dashboard_create_new_recipe')
-
+    path('dashboard/recipe/new/create/', views.view_dashboard_create_new_recipe,  # noqa: E501
+         name='dashboard_create_new_recipe'),
 ]

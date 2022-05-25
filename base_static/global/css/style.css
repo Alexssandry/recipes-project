@@ -72,6 +72,9 @@ a {
     color:var(--color-primary);
     text-decoration: none;
 }
+.vermelho {
+    color: red;
+}
 .container {
     max-width: 1200px;
     margin: 0 auto;

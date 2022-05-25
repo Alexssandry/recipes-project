@@ -1,6 +1,7 @@
 {% if request.user.is_authenticated %}
     <div class="login-messages">
-        Your are logged in with {{ request.user.username }}. Please, 
+        Your are logged in with {{ request.user.username }}.
+        <a href="{% url 'authors:dashboard' %}">See your recipes</a> or 
         <form class="inline-form" action="{% url 'authors:logout' %}" method="POST">
             {% csrf_token %}
 

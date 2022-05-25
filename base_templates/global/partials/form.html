@@ -1,19 +1,24 @@
 <div class="main-content container">
-    <form action="{{ form_action }}" method="POST">
+    <form action="{{ form_action }}" method="POST" class="main-form" enctype="multipart/form-data">
         
         {% csrf_token %}
 
         <div class="form-content form-content-grid">
             {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}" class="">{{ field.label}}</label>
+                <div class="form-group {{ field.field.widget.attrs.class }}">
+                    <label for="{{ field.id_for_label }}" class="">{{ field.label }}</label>
                     {{ field }}
                     {% if field.help_text %}
                         <p class="help-text">{{field.help_text}}</p>
                     {% endif %}
 
                     {{ field.errors }}
-                </div>    
+                </div>
+                {% if field.name == 'cover' and field.value.url %}
+                    <div class="span-2">
+                        <img src="{{ field.value.url }}" alt="Capa para {{ recipe.title }}">
+                    </div>
+                {% endif %}    
             {% endfor %}
         </div>
 

@@ -139,16 +139,82 @@ def view_dashboard_recipe_edit(request, id):
         raise Http404
 
     form = AuthorRecipeForm(
-        request.POST or None,
+        data=request.POST or None,
+        files=request.FILES or None,
         instance=recipe,
     )
+
+    if form.is_valid():
+        # Agora, o form é válido e posso tentar salvar
+        recipe = form.save(commit=False)
+
+        recipe.author = request.user
+        recipe.preparation_steps_in_html = False
+        recipe.is_published = False
+
+        recipe.save()
+
+        messages.success(request, 'Sua receita foi salva com sucesso!')
+
+        return redirect(reverse('authors:dashboard_recipe_edit', args=(id,)))
 
     context = {
         'title': 'Dashboard Recipe Edit',
         'form': form,
+        'form_action': ''
     }
     return render(
         request,
         'authors/pages/dashboard_recipe.html',
         context=context
     )
+
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def view_dashboard_new_recipe(request):
+    new_recipe_form_data = request.session.get('new_recipe_form_data', None)
+
+    form = AuthorRecipeForm(new_recipe_form_data)
+
+    context = {
+        'title': 'Create Recipe',
+        'form': form,
+        'form_action': reverse('authors:dashboard_create_new_recipe')
+    }
+    return render(
+        request,
+        'authors/pages/dashboard_create_recipe.html',
+        context=context
+    )
+
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def view_dashboard_create_new_recipe(request):
+    if not request.POST:
+        raise Http404
+
+    POST = request.POST
+    request.session['new_recipe_form_data'] = POST
+
+    form = AuthorRecipeForm(
+        data=POST,
+        files=request.FILES
+    )
+
+    # cria um slug provisorio
+    recipe_last_id = int(Recipe.objects.all().last().id)
+
+    if form.is_valid():
+        data_form = form.save(commit=False)
+        data_form.author = request.user
+        data_form.is_published = False
+        data_form.preparation_steps_in_html = False
+        data_form.slug = 'new-recipe-teste-{0}'.format(recipe_last_id + 1)
+        data_form.save()
+        messages.success(request, 'Recipe foi criada com sucesso!')
+
+        del(request.session['new_recipe_form_data'])
+    else:
+        messages.error(request, 'Não foi possivel criar sua recipe')
+
+    return redirect('authors:dashboard')

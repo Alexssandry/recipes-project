@@ -202,14 +202,14 @@ def view_dashboard_create_new_recipe(request):
     )
 
     # cria um slug provisorio
-    recipe_last_id = int(Recipe.objects.all().last().id)
+    # recipe_last_id = int(Recipe.objects.all().last().id)
 
     if form.is_valid():
         data_form = form.save(commit=False)
         data_form.author = request.user
         data_form.is_published = False
         data_form.preparation_steps_in_html = False
-        data_form.slug = 'new-recipe-teste-{0}'.format(recipe_last_id + 1)
+        # data_form.slug = 'new-recipe-teste-{0}'.format(recipe_last_id + 1)
         data_form.save()
         messages.success(request, 'Recipe foi criada com sucesso!')
 

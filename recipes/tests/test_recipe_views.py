@@ -10,7 +10,8 @@ class RecipeViewsTest(RecipeBaseTest):
 
     def test_recipe_home_view_function_is_correct(self):
         view = resolve('/')
-        self.assertIs(view.func, views.view_home)
+        self.assertIs(view.func.__name__, 'view_home')  # views.view_home
+        # self.assertIs(view.func, views.view_home)
 
     def test_recipe_home_view_returns_status_code_200_ok(self):
         response = self.client.get(reverse('recipes:home'))

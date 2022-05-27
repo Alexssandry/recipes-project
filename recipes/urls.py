@@ -6,9 +6,10 @@ from . import views
 app_name = 'recipes'
 
 urlpatterns = [
-    path('', views.view_home, name='home'),
-    path('recipes/search/', views.view_search, name='search'),
+    path('', views.RecipeListViewHome.as_view(), name='home'),
+    path('recipes/search/', views.RecipeListViewSearch.as_view(), name='search'),  # noqa
     path('recipes/category/<int:category_id>/',
-         views.view_category, name='category'),
-    path('recipes/<int:recipe_id>/', views.view_recipe_detail, name='recipe'),
+         views.RecipeListViewCategory.as_view(), name='category'),
+    path('recipes/<int:recipe_id>/',
+         views.RecipeDetailViewDetail.as_view(), name='recipe'),
 ]

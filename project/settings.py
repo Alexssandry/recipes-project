@@ -27,10 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+# DEBUG = os.environ.get('DEBUG')
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # type: ignore
-
+# ALLOWED_HOSTS = ['*']  # type: ignore # somente com debug false
+ALLOWED_HOSTS = []  # type: ignore
 
 # Application definition
 
@@ -143,6 +144,7 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = '{0}/static'.format(BASE_DIR)
+# STATIC_ROOT = '/static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '{0}/media'.format(BASE_DIR)

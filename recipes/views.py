@@ -2,7 +2,8 @@ import os
 
 from django.contrib import messages  # noqa: F401
 from django.db.models import Q
-from django.http import Http404
+from django.forms.models import model_to_dict
+from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.views.generic import DetailView, ListView
 from utils.pagination import func_pagination
@@ -29,7 +30,7 @@ class RecipeListViewHome(ListView):
         qs = qs.filter(
             is_published=True,
         )
-
+        qs = qs.select_related('author', 'category')
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -68,7 +69,7 @@ class RecipeListViewCategory(ListView):
             category__id=category_id,
             is_published=True,
         )
-
+        qs = qs.select_related('author', 'category')
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -114,7 +115,7 @@ class RecipeListViewSearch(ListView):
             Q(description__icontains=search_term),
             is_published=True,
         )
-
+        qs = qs.select_related('author', 'category')
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -198,6 +199,7 @@ class RecipeDetailViewDetail(DetailView):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        qs = qs.select_related('author', 'category')
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -257,3 +259,71 @@ def view_search(request):
             pagination_range['total_pages']),
     }
     return render(request, 'recipes/pages/search.html', context=context)
+
+
+class RecipeListViewHomeAPI(ListView):
+    model = Recipe
+    paginate_by = None
+    context_object_name = 'recipes'
+    ordering = ['-id']
+    template_name = 'recipes/pages/home.html'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+
+        qs = qs.filter(
+            is_published=True,
+        )
+        qs = qs.select_related('author', 'category')
+        return qs
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+        page_object, pagination_range = func_pagination(
+            self.request,
+            ctx.get('recipes'),
+            pages_per_page=PER_PAGE
+        )
+
+        ctx.update({
+            'recipes': page_object,
+            'pagination_range': pagination_range,
+            'link_inicial': '?page=1',
+            'link': '?page=',
+            'link_final': '?page={0}'.format(
+                pagination_range['total_pages']
+            )
+        })
+
+        return {'recipes': ctx.get('recipes')}
+
+    def render_to_response(self, context, **response_kwargs):
+        recipe = self.get_queryset().values()
+        recipes = self.get_context_data()['recipes']  # noqa
+        recipes_dict = self.get_context_data()['recipes'].object_list.values()  # noqa
+
+        return JsonResponse(list(recipe), safe=False)
+
+
+class RecipeDetailViewDetailAPI(DetailView):
+    model = Recipe
+    context_object_name = 'recipes'
+    template_name = 'recipes/pages/recipe_detail.html'
+    pk_url_kwarg = 'recipe_id'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(pk=self.kwargs.get('recipe_id'))
+        qs = qs.select_related('author', 'category')
+        return qs
+
+    def render_to_response(self, context, **response_kwargs):
+        recipe = self.get_context_data()['recipes']
+        recipe_dict = model_to_dict(recipe)
+
+        recipe_dict['cover'] = self.request.build_absolute_uri() + \
+            recipe_dict['cover'].url[1:]
+
+        del recipe_dict['is_published']
+
+        return JsonResponse(recipe_dict, safe=False)

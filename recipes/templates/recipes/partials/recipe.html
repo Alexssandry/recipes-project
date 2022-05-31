@@ -27,8 +27,7 @@
             {{ recipe.created_at|date:"d/m/Y à\s H:i:s" }}
         </span>
         <span class="recipe-author-item">
-            {% comment %} <a href="{% url 'recipes:category' recipe.category.id %}"> {% endcomment %}
-            <a href="#">    
+            <a href="{% url 'recipes:category' recipe.category.id %}">
                 <i class="fas fa-layer-group"></i>
                 <span>{{ recipe.category.name }}</span>
             </a>

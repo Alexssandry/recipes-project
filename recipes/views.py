@@ -1,7 +1,9 @@
 import os
 
 from django.contrib import messages  # noqa: F401
-from django.db.models import Q
+from django.db.models import F, Q, Value  # noqa
+from django.db.models.aggregates import Count, Max, Min  # noqa
+from django.db.models.functions import Concat
 from django.forms.models import model_to_dict
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
@@ -15,6 +17,58 @@ from recipes.models import Recipe
 PER_PAGE = int(os.environ.get('PER_PAGE', 6))
 
 # print('DEBUG = {0}'.format(os.environ.get('DEBUG')))
+
+
+def theory(request, *args, **kwargs):
+    # Sem usar a query o django não faz consulta na base de dados.
+
+    # recipes = Recipe.objects.all()
+    # recipes_filter = recipes.filter(title__icontains='Teste')
+    # recipes_first = recipes.first()
+    # recipes_first_2 = recipes.filter(title__icontains='Test').first()
+    # recipes_last = recipes.last()
+    # recipes_order_crescente = recipes.order_by('id')
+    # recipes_order_decrescente = recipes.order_by('-id')
+
+    # filter(pk=id) = retornar um objecto com a primary key (id)
+
+    # Recipe.object.all()
+    # Recipe.object.get()
+    # Recipe.object.filter()
+    # Recipe.object.filter().filter().first()
+
+    # print('RECIPES = {0}'.format(recipes))
+    # print('RECIPES = {0}'.format(recipes[0].title))
+
+    # list(recipes)
+
+    # recipes = Recipe.objects.filter(
+    #     Q(
+    #         Q(title__icontains='ena',) |
+    #         Q(description__icontains='te',)
+    #     )
+    # )
+    # recipes = recipes.select_related('author')
+
+    # recipes = Recipe.objects.values('id', 'title', 'author__username')
+    recipes = Recipe.objects.all().annotate(
+        author_full_name=Concat(
+            F('author__first_name'),
+            Value(' '),
+            F('author__last_name'))
+    )
+    number_of_recipes = recipes.aggregate(Count('id'))
+
+    context = {
+        'recipes': recipes,
+        'number_of_recipes': number_of_recipes,
+    }
+
+    return render(
+        request,
+        'recipes/pages/theory.html',
+        context=context,
+    )
 
 
 class RecipeListViewHome(ListView):

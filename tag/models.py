@@ -10,7 +10,7 @@ from django.utils.text import slugify
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
 
     # Aqui começam os campos para a relação genérica
@@ -19,7 +19,7 @@ class Tag(models.Model):
 
     # Representa o id da linha do model descrito acima
     # object_id = models.PositiveIntegerField()
-    object_id = models.CharField()
+    object_id = models.CharField(max_length=200)
     # Um campo que representa a relação genérica que conhece os
     # campos acima (content_type, object_id)
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -30,7 +30,8 @@ class Tag(models.Model):
                 string.ascii_letters + string.digits,
                 k=5,
             ))
-            self.slug = slugify('{0}-{1}').format(self.name, rand_letters)
+            nova_slug = '{0}-{1}'.format(self.name, rand_letters)
+            self.slug = slugify(nova_slug)
         return super().save(*args, **kwargs)
 
     def __str__(self):

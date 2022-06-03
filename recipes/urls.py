@@ -8,6 +8,7 @@ app_name = 'recipes'
 urlpatterns = [
      path('', views.RecipeListViewHome.as_view(), name='home'),
      path('recipes/search/', views.RecipeListViewSearch.as_view(), name='search'),  # noqa
+     path('recipes/tags/<slug:slug>', views.RecipeViewTag.as_view(), name='tag'),  # noqa
      path('recipes/theory', views.theory, name='theory'),
      path('recipes/api/v1/',
           views.RecipeListViewHomeAPI.as_view(), name='api_home'),

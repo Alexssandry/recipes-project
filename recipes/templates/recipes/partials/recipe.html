@@ -69,9 +69,18 @@
     {% endif %}
 
     {% if is_detail_page %}
-    <div class="recipe-content preparation-steps">
-        <p>{{ recipe.preparation_step|linebreaksbr }}</p>
-    </div>
+        <div class="recipe-content preparation-steps">
+            <p>{{ recipe.preparation_step|linebreaksbr }}</p>
+        </div>
+        
+        {% if recipe.tags.all %}
+            <p>
+                Tags:
+                {% for tag in recipe.tags.all  %}
+                    <a href="{% url 'recipes:tag' tag.slug %}">{{ tag.name }}</a>, 
+                {% endfor %}
+            </p>
+        {% endif %}
     {% endif %}
 
 

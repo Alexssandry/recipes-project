@@ -1,0 +1,16 @@
+{% extends 'global/base.html' %}
+{% block title %}{{ page_title }}{% endblock title %}
+{% block content %}
+
+{% if recipes %}
+    <div class="main-content container main-content-list">
+            {% for recipe in recipes %}
+                {% include 'recipes/partials/recipe.html' %}
+            {% endfor %}
+    </div>
+{% else %}
+    <div class="main-content container main-content-list center">
+            <h1>No recipes found here.</h1>
+    </div>
+{% endif %}
+{% endblock content %}

@@ -8,6 +8,7 @@ from django.forms.models import model_to_dict
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.views.generic import DetailView, ListView
+from tag.models import Tag
 from utils.pagination import func_pagination
 
 from recipes.models import Recipe
@@ -254,6 +255,7 @@ class RecipeDetailViewDetail(DetailView):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.select_related('author', 'category')
+        qs = qs.prefetch_related('tags')
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -369,6 +371,7 @@ class RecipeDetailViewDetailAPI(DetailView):
         qs = super().get_queryset(*args, **kwargs)
         qs = qs.filter(pk=self.kwargs.get('recipe_id'))
         qs = qs.select_related('author', 'category')
+        qs = qs.prefetch_related('tags')
         return qs
 
     def render_to_response(self, context, **response_kwargs):
@@ -381,3 +384,35 @@ class RecipeDetailViewDetailAPI(DetailView):
         del recipe_dict['is_published']
 
         return JsonResponse(recipe_dict, safe=False)
+
+
+class RecipeViewTag(ListView):
+    model = Recipe
+    paginate_by = None
+    context_object_name = 'recipes'
+    ordering = ['-id']
+    template_name = 'recipes/pages/tag.html'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(
+            tags__slug=self.kwargs.get('slug', '')
+        )
+
+        qs = qs.select_related('author', 'category')
+        qs = qs.prefetch_related('tags')
+
+        return qs
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+        page_title = Tag.objects.filter(
+            slug=self.kwargs.get('slug', '')).first()
+        if not page_title:
+            page_title = 'Not found'
+
+        ctx.update({
+            'page_title': '{0}'.format(page_title)
+        })
+
+        return ctx

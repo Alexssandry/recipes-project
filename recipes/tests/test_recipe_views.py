@@ -1,3 +1,5 @@
+from unittest import skip
+
 from django.urls import resolve, reverse
 from recipes import views
 
@@ -8,6 +10,7 @@ from .test_recipe_base import RecipeBaseTest
 
 class RecipeViewsTest(RecipeBaseTest):
 
+    @skip('View teste')
     def test_recipe_home_view_function_is_correct(self):
         view = resolve('/')
         self.assertIs(view.func.__name__, 'view_home')  # views.view_home
@@ -53,6 +56,7 @@ class RecipeViewsTest(RecipeBaseTest):
         self.assertNotEqual(quantidade_recipes_not_is_published,
                             quantidade_recipes_is_published)
 
+    @skip('View2')
     def test_recipe_category_view_function_is_correct(self):
         view = resolve('/recipes/category/1/')
         self.assertIs(view.func, views.view_category)
@@ -101,6 +105,7 @@ class RecipeViewsTest(RecipeBaseTest):
         self.assertNotEqual(quantidade_recipes_not_is_published,
                             quantidade_recipes_is_published)
 
+    @skip('View3')
     def test_recipe_detail_view_function_is_correct(self):
         view = resolve('/recipes/1/')
         self.assertIs(view.func, views.view_recipe_detail)
@@ -116,6 +121,7 @@ class RecipeViewsTest(RecipeBaseTest):
         template = 'recipes/pages/recipe_detail.html'
         self.assertTemplateUsed(response, template)
 
+    @skip('View4')
     def test_recipe_detail_template_shows_no_recipes_found_if_no_recipes(self):
         self.delete_recipe()
 
@@ -136,6 +142,7 @@ class RecipeViewsTest(RecipeBaseTest):
         response_content = response.content.decode('utf-8')
         self.assertIn('Recipe title', response_content)
 
+    @skip('View5')
     def test_recipe_detail_not_loads_recipes_is_published(self):
         response = self.client.get(
             reverse('recipes:recipe', kwargs={'recipe_id': 1}))

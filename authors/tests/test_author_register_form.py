@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from authors.forms import RegisterForm
 from django.test import TestCase as DjangoTestCase
@@ -71,6 +71,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         }
         return super().setUp(*args, **kwargs)
 
+    @skip('Author1')
     def test_fields_cannot_be_empty(self):
         self.form_data['username'] = ''
         url = reverse('authors:register_create')
